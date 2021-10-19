@@ -4,9 +4,10 @@ import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader';
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 
-setTimeout( () =>{
+setTimeout(() => {
     document.querySelector(".preloader").classList.add("preloader-hidden")
-}, 5000)
+// }, 5000)
+}, 0)
 
 const loader = new OBJLoader();
 
@@ -15,8 +16,8 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
-// const axesHelper = new THREE.AxesHelper(5);
-// scene.add(axesHelper);
+const axesHelper = new THREE.AxesHelper(5);
+scene.add(axesHelper);
 /**
  * Textures
  */
@@ -131,6 +132,25 @@ bush4.scale.set(0.15, 0.15, 0.15)
 bush4.position.set(-1, 0.05, 2.6)
 
 house.add(bush1, bush2, bush3, bush4)
+
+// EGGs
+const eggs = new THREE.Group()
+
+const geometryEgg = new THREE.SphereGeometry(0.05, 5, 5);
+for (let i = 0; i < 150; i++) {
+    const materialEgg = new THREE.MeshBasicMaterial({color: "blue"})
+    const angle = Math.random() * Math.PI * 2 // Random angle
+    const radius = 3 + Math.random() * 6      // Random radius
+    const x = Math.cos(angle) * radius        // Get the x position using cosinus
+    const z = Math.sin(angle) * radius        // Get the z position using sinus
+    const sphereEgg = new THREE.Mesh(geometryEgg, materialEgg);
+    sphereEgg.castShadow = true
+    sphereEgg.position.set(x, 0.3, z)
+    sphereEgg.touch = false
+    eggs.add(sphereEgg)
+}
+scene.add(eggs);
+
 
 // Graves
 const graves = new THREE.Group()
@@ -260,25 +280,37 @@ loader.load('model/duck/duck.obj', (object) => {
         duck.castShadow = true
         duck.scale.set(0.2, 0.2, 0.2)
         duck.position.z = 9
-
+        duck.eggDetectCollision = () => {
+            let duckX = duck.position.x + 1
+            let duckZ = duck.position.z + 1
+            eggs.children.forEach(egg => {
+                if (!egg.touch) {
+                    let eggX = egg.position.x + 1
+                    let eggZ = egg.position.z + 1
+                    const x = eggX - duckX
+                    const z = eggZ - duckZ
+                    if ((x < 0.3 && x > -0.3) && (z < 0.3 && z > -0.3)) {
+                        egg.visible = false
+                        egg.touch = true
+                        const eggHtml = document.querySelector('.eggs')
+                        eggHtml.innerHTML = ++eggHtml.innerHTML
+                        var audio = new Audio("https://raw.githubusercontent.com/StekolschikovV/duck-halloween/main/dist/mp3/getEgg.mp3")
+                        audio.play();
+                    }
+                }
+            })
+        }
         duck.detectCollision = (ghostList) => {
-
             let duckX = duck.position.x + 100
             let duckZ = duck.position.z + 100
             let isCollision = false
-
-            ghostList.forEach( ghost => {
-
+            ghostList.forEach(ghost => {
                 let ghostX = ghost.position.x + 100
                 let ghostZ = ghost.position.z + 100
                 const x = ghostX - duckX
                 const z = ghostZ - duckZ
-                const size = 0.3
-
-
                 if ((x < 0.5 && x > -0.5) && (z < 0.5 && z > -0.5)) {
                     isCollision = true
-
                 }
             })
 
@@ -286,6 +318,9 @@ loader.load('model/duck/duck.obj', (object) => {
                 const gameOverHtml = document.querySelector('.game-over')
                 gameOverHtml.style.display = "block"
                 gameOverHtml.style.opacity = 1
+
+                var audio = new Audio("https://raw.githubusercontent.com/StekolschikovV/duck-halloween/main/dist/mp3/end.mp3")
+                audio.play();
             }
         }
         scene.add(duck);
@@ -296,7 +331,7 @@ loader.load('model/duck/duck.obj', (object) => {
  * Fog
  */
 const fog = new THREE.Fog('#262837', 1, 10)
-scene.fog = fog
+// scene.fog = fog
 
 /**
  * Sizes
@@ -318,9 +353,7 @@ window.addEventListener('resize', () => {
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 4
-camera.position.y = 2
-camera.position.z = 5
+camera.position.z = -10
 scene.add(camera)
 
 // Controls
@@ -412,16 +445,14 @@ const tick = () => {
         && duck
     ) {
         duck.detectCollision([ghost1obj, ghost2obj, ghost3obj])
+        duck.eggDetectCollision()
     }
 
 
     // controls.update()
 
 
-    // Render
     renderer.render(scene, camera)
-
-    // Call tick again on the next frame
     window.requestAnimationFrame(tick)
 
 }
@@ -429,9 +460,8 @@ const tick = () => {
 tick()
 
 
-setTimeout(() => {
-    var audio = new Audio("https://raw.githubusercontent.com/StekolschikovV/duck-halloween/main/dist/mp3/AddamsFamilyTheme.mp3")
-
-    // var audio = new Audio('https://github.com/StekolschikovV/duck-halloween/blob/main/dist/mp3/AddamsFamilyTheme.mp3');
-    audio.play();
-}, 3000)
+// setTimeout(() => {
+//     var audio = new Audio("https://raw.githubusercontent.com/StekolschikovV/duck-halloween/main/dist/mp3/AddamsFamilyTheme.mp3")
+// loop.loop = true
+//     audio.play();
+// }, 3000)
