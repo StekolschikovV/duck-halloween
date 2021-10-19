@@ -331,7 +331,7 @@ loader.load('model/duck/duck.obj', (object) => {
  * Fog
  */
 const fog = new THREE.Fog('#262837', 1, 10)
-// scene.fog = fog
+scene.fog = fog
 
 /**
  * Sizes
@@ -462,6 +462,11 @@ tick()
 
 setTimeout(() => {
     var audio = new Audio("https://raw.githubusercontent.com/StekolschikovV/duck-halloween/main/dist/mp3/AddamsFamilyTheme.mp3")
-loop.loop = true
     audio.play();
+    audio.volume = 0.2;
+
+    audio.addEventListener('ended', function() {
+        this.currentTime = 0;
+        this.play();
+    }, false);
 }, 3000)
