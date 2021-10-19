@@ -430,6 +430,8 @@ tick()
 
 
 setTimeout(() => {
-    var audio = new Audio('/mp3/AddamsFamilyTheme.mp3');
+    var audio = new Audio("https://raw.githubusercontent.com/StekolschikovV/duck-halloween/main/dist/mp3/AddamsFamilyTheme.mp3")
+
+    // var audio = new Audio('https://github.com/StekolschikovV/duck-halloween/blob/main/dist/mp3/AddamsFamilyTheme.mp3');
     audio.play();
 }, 3000)
