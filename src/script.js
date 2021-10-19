@@ -460,8 +460,8 @@ const tick = () => {
 tick()
 
 
-// setTimeout(() => {
-//     var audio = new Audio("https://raw.githubusercontent.com/StekolschikovV/duck-halloween/main/dist/mp3/AddamsFamilyTheme.mp3")
-// loop.loop = true
-//     audio.play();
-// }, 3000)
+setTimeout(() => {
+    var audio = new Audio("https://raw.githubusercontent.com/StekolschikovV/duck-halloween/main/dist/mp3/AddamsFamilyTheme.mp3")
+loop.loop = true
+    audio.play();
+}, 3000)
