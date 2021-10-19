@@ -460,7 +460,6 @@ const tick = () => {
 tick()
 
 
-setTimeout(() => {
     var audio = new Audio("https://raw.githubusercontent.com/StekolschikovV/duck-halloween/main/dist/mp3/AddamsFamilyTheme.mp3")
     audio.play();
     audio.volume = 0.2;
@@ -469,4 +468,3 @@ setTimeout(() => {
         this.currentTime = 0;
         this.play();
     }, false);
-}, 3000)
